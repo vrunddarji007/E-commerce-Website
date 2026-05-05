@@ -1,3 +1,8 @@
+// Maintenance Mode Check
+if (localStorage.getItem('maintenanceMode') === 'true' && !window.location.pathname.includes('admin.html') && !window.location.pathname.includes('maintenance.html')) {
+    window.location.href = 'maintenance.html';
+}
+
 // Sample product data
 const products = [
     {

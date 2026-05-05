@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - ShopZone</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --admin-primary: #4e73df;
+            --admin-success: #1cc88a;
+            --admin-dark: #2c3e50;
+            --admin-light: #f8f9fc;
+            --admin-gray: #858796;
+        }
+
+        body.admin-body {
+            background-color: var(--admin-light);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            margin: 0;
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 250px;
+            background: linear-gradient(180deg, var(--admin-primary) 0%, #224abe 100%);
+            color: white;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 4px 0 10px rgba(0,0,0,0.1);
+        }
+
+        .sidebar-brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .sidebar-nav {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .nav-item {
+            margin-bottom: 0.5rem;
+        }
+
+        .nav-link-admin {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: rgba(255,255,255,0.8);
+            text-decoration: none;
+            padding: 12px 15px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-link-admin:hover, .nav-link-admin.active {
+            color: white;
+            background: rgba(255,255,255,0.1);
+        }
+
+        .nav-link-admin i {
+            width: 20px;
+            text-align: center;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .topbar {
+            height: 70px;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 2rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .content-wrapper {
+            padding: 2rem;
+        }
+
+        .page-title {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--admin-dark);
+            margin-bottom: 2rem;
+        }
+
+        /* Cards */
+        .admin-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 1rem;
+        }
+
+        .card-header h3 {
+            margin: 0;
+            font-size: 1.25rem;
+            color: var(--admin-dark);
+        }
+
+        /* Toggle Switch */
+        .setting-item {
+            display: flex !important;
+            justify-content: space-between !important;
+            align-items: center !important;
+            padding: 1.5rem 0 !important;
+            border-bottom: 1px solid #f0f0f0 !important;
+        }
+
+        .switch {
+            position: relative !important;
+            display: inline-block !important;
+            width: 60px !important;
+            height: 30px !important;
+        }
+
+        .switch input {
+            opacity: 0 !important;
+            width: 0 !important;
+            height: 0 !important;
+        }
+
+        .slider {
+            position: absolute !important;
+            cursor: pointer !important;
+            top: 0 !important;
+            left: 0 !important;
+            right: 0 !important;
+            bottom: 0 !important;
+            background-color: #cbd5e0 !important;
+            transition: .4s !important;
+            border-radius: 34px !important;
+        }
+
+        .slider:before {
+            position: absolute !important;
+            content: "" !important;
+            height: 22px !important;
+            width: 22px !important;
+            left: 4px !important;
+            bottom: 4px !important;
+            background-color: white !important;
+            transition: .4s !important;
+            border-radius: 50% !important;
+        }
+
+        input:checked + .slider {
+            background-color: #4e73df !important;
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(30px) !important;
+        }
+
+        /* Status Badge */
+        .status-badge {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .status-online {
+            background: #e1f7ed;
+            color: #1cc88a;
+        }
+
+        .status-maintenance {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        /* Notification */
+        .notification {
+            position: fixed !important;
+            bottom: 30px !important;
+            right: 30px !important;
+            padding: 15px 30px !important;
+            background: #333 !important;
+            color: white !important;
+            border-radius: 10px !important;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.4) !important;
+            transform: translateY(200%) !important;
+            transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) !important;
+            z-index: 10000 !important;
+            font-weight: 600 !important;
+            pointer-events: none !important;
+            opacity: 0 !important;
+        }
+
+        .notification.show {
+            transform: translateY(0) !important;
+            opacity: 1 !important;
+        }
+
+        .back-home {
+            color: var(--admin-primary);
+            text-decoration: none;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .back-home:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body class="admin-body">
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-brand">
+            <i class="fas fa-shopping-bag"></i>
+            <span>ShopZone Admin</span>
+        </div>
+        <ul class="sidebar-nav">
+            <li class="nav-item">
+                <a href="#" class="nav-link-admin active">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <span>Dashboard</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="index.html" class="nav-link-admin">
+                    <i class="fas fa-eye"></i>
+                    <span>View Website</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link-admin">
+                    <i class="fas fa-cog"></i>
+                    <span>Settings</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="topbar">
+            <a href="index.html" class="back-home">
+                <i class="fas fa-arrow-left"></i>
+                Back to Site
+            </a>
+            <div class="user-profile">
+                <span id="siteStatus" class="status-badge status-online">Site Online</span>
+            </div>
+        </div>
+
+        <div class="content-wrapper">
+            <h1 class="page-title">General Settings</h1>
+
+            <div class="admin-card">
+                <div class="card-header">
+                    <h3>Site Maintenance</h3>
+                    <i class="fas fa-tools text-gray"></i>
+                </div>
+                
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <h4>Maintenance Mode</h4>
+                        <p>Enable this to show the maintenance page to all visitors.</p>
+                    </div>
+                    <label class="switch">
+                        <input type="checkbox" id="maintenanceToggle">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="admin-card">
+                <div class="card-header">
+                    <h3>System Information</h3>
+                </div>
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <h4>Last Updated</h4>
+                        <p>May 05, 2024 - 19:58</p>
+                    </div>
+                </div>
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <h4>Version</h4>
+                        <p>v2.1.0-alpha</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="notification" class="notification">
+        Settings updated successfully!
+    </div>
+
+    <script>
+        const maintenanceToggle = document.getElementById('maintenanceToggle');
+        const siteStatus = document.getElementById('siteStatus');
+        const notification = document.getElementById('notification');
+
+        // Load initial state
+        const isMaintenance = localStorage.getItem('maintenanceMode') === 'true';
+        maintenanceToggle.checked = isMaintenance;
+        updateStatusBadge(isMaintenance);
+
+        maintenanceToggle.addEventListener('change', (e) => {
+            const enabled = e.target.checked;
+            localStorage.setItem('maintenanceMode', enabled);
+            updateStatusBadge(enabled);
+            showNotification();
+        });
+
+        function updateStatusBadge(enabled) {
+            if (enabled) {
+                siteStatus.textContent = 'Site Maintenance';
+                siteStatus.className = 'status-badge status-maintenance';
+            } else {
+                siteStatus.textContent = 'Site Online';
+                siteStatus.className = 'status-badge status-online';
+            }
+        }
+
+        function showNotification() {
+            notification.classList.add('show');
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
